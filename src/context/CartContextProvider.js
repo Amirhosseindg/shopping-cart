@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { createContext, useReducer } from "react";
 
 const initialState = {
   selectedItems: [],
@@ -13,7 +13,7 @@ const cartReducer = (state, action) => {
       // adding item for the first time
       if (!state.selectedItems.find((item) => item.id === action.payload.id)) {
         state.selectedItems.push({
-          ...state.payload,
+          ...action.payload,
           quantity: 1,
         });
       }
@@ -52,6 +52,7 @@ const cartReducer = (state, action) => {
       return {
         ...state,
       };
+
     case "CHECKOUT":
       return {
         selectedItems: [],
@@ -71,10 +72,16 @@ const cartReducer = (state, action) => {
       return state;
   }
 };
-const CartContextProvider = () => {
+
+export const CartContext = createContext();
+const CartContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  return <div></div>;
+  return (
+    <CartContext.Provider value={{ state, dispatch }}>
+      {children}
+    </CartContext.Provider>
+  );
 };
 
 export default CartContextProvider;
